@@ -11,9 +11,12 @@
 #include <dt-bindings/gpio/gpio.h>
 
 / {
+	model = "StarFive VisionFive 2 framework";
+	compatible = "starfive,visionfive-2-framework", "starfive,jh7110";
+
 	aliases {
-		ethernet0 = &gmac0;
-		ethernet1 = &gmac1;
+//		ethernet0 = &gmac0;
+//		ethernet1 = &gmac1;
 		i2c0 = &i2c0;
 		i2c1 = &i2c1;
 		i2c2 = &i2c2;
@@ -68,17 +71,17 @@
 		};
 	};
 
-	leds {
-		compatible = "gpio-leds";
-
-		led-ack {
-			gpios = <&aongpio 3 GPIO_ACTIVE_HIGH>;
-			color = <LED_COLOR_ID_GREEN>;
-			function = LED_FUNCTION_HEARTBEAT;
-			linux,default-trigger = "heartbeat";
-			label = "ack";
-		};
-	};
+//	leds {
+//		compatible = "gpio-leds";
+//
+//		led-ack {
+//			gpios = <&aongpio 3 GPIO_ACTIVE_HIGH>;
+//			color = <LED_COLOR_ID_GREEN>;
+//			function = LED_FUNCTION_HEARTBEAT;
+//			linux,default-trigger = "heartbeat";
+//			label = "ack";
+//		};
+//	};
 
 	gpio-restart {
 		compatible = "gpio-restart";
@@ -86,32 +89,39 @@
 		priority = <224>;
 	};
 
-	pwmdac_codec: pwmdac-codec {
-		compatible = "linux,spdif-dit";
-		#sound-dai-cells = <0>;
-	};
+//	pwmdac_codec: pwmdac-codec {
+//		compatible = "linux,spdif-dit";
+//		#sound-dai-cells = <0>;
+//	};
 
-	sound3: snd-card3 {
+	sound7: snd-card7 {
 		compatible = "simple-audio-card";
-		simple-audio-card,name = "Starfive-PWMDAC-Sound-Card";
+		simple-audio-card,name = "Starfive-ES8326-Sound-Card";
 		#address-cells = <1>;
 		#size-cells = <0>;
-
-		simple-audio-card,dai-link@0 {
-			reg = <0>;
-			format = "left_j";
-			bitclock-master = <&sndcpu0>;
-			frame-master = <&sndcpu0>;
-
-			sndcpu0: cpu {
-				sound-dai = <&pwmdac>;
-			};
-
-			codec {
-				sound-dai = <&pwmdac_codec>;
-			};
-		};
 	};
+		
+//	sound3: snd-card3 {
+//		compatible = "simple-audio-card";
+//		simple-audio-card,name = "Starfive-PWMDAC-Sound-Card";
+//		#address-cells = <1>;
+//		#size-cells = <0>;
+//
+//		simple-audio-card,dai-link@0 {
+//			reg = <0>;
+//			format = "left_j";
+//			bitclock-master = <&sndcpu0>;
+//			frame-master = <&sndcpu0>;
+//
+//			sndcpu0: cpu {
+//				sound-dai = <&pwmdac>;
+//			};
+//
+//			codec {
+//				sound-dai = <&pwmdac_codec>;
+//			};
+//		};
+//	};
 
 	sound1: snd-card1 {
 		compatible = "simple-audio-card";
@@ -137,11 +147,11 @@
 		};
 	};
 
-	ac108_mclk: ac108_mclk {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <24000000>;
-	};
+//	ac108_mclk: ac108_mclk {
+//		compatible = "fixed-clock";
+//		#clock-cells = <0>;
+//		clock-frequency = <24000000>;
+//	};
 
 	clk_ext_camera: clk-ext-camera {
 		compatible = "fixed-clock";
@@ -149,32 +159,32 @@
 		clock-frequency = <24000000>;
 	};
 
-	wm8960_mclk: wm8960_mclk {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <24576000>;
-	};
+//	wm8960_mclk: wm8960_mclk {
+//		compatible = "fixed-clock";
+//		#clock-cells = <0>;
+//		clock-frequency = <24576000>;
+//	};
 };
 
 &dvp_clk {
 	clock-frequency = <74250000>;
 };
 
-&gmac0_rgmii_rxin {
-	clock-frequency = <125000000>;
-};
+//&gmac0_rgmii_rxin {
+//	clock-frequency = <125000000>;
+//};
 
-&gmac0_rmii_refin {
-	clock-frequency = <50000000>;
-};
+//&gmac0_rmii_refin {
+//	clock-frequency = <50000000>;
+//};
 
-&gmac1_rgmii_rxin {
-	clock-frequency = <125000000>;
-};
+//&gmac1_rgmii_rxin {
+//	clock-frequency = <125000000>;
+//};
 
-&gmac1_rmii_refin {
-	clock-frequency = <50000000>;
-};
+//&gmac1_rmii_refin {
+//	clock-frequency = <50000000>;
+//};
 
 &hdmitx0_pixelclk {
 	clock-frequency = <297000000>;
@@ -212,37 +222,37 @@
 	clock-frequency = <49152000>;
 };
 
-&gmac0 {
-	phy-handle = <&phy0>;
-	phy-mode = "rgmii-id";
-	status = "okay";
+//&gmac0 {
+//	phy-handle = <&phy0>;
+//	phy-mode = "rgmii-id";
+//	status = "okay";
+//
+//	mdio {
+//		#address-cells = <1>;
+//		#size-cells = <0>;
+//		compatible = "snps,dwmac-mdio";
+//
+//		phy0: ethernet-phy@0 {
+//			reg = <0>;
+//		};
+//	};
+//};
 
-	mdio {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		compatible = "snps,dwmac-mdio";
-
-		phy0: ethernet-phy@0 {
-			reg = <0>;
-		};
-	};
-};
-
-&gmac1 {
-	phy-handle = <&phy1>;
-	phy-mode = "rgmii-id";
-	status = "okay";
-
-	mdio {
-		#address-cells = <1>;
-		#size-cells = <0>;
-		compatible = "snps,dwmac-mdio";
-
-		phy1: ethernet-phy@1 {
-			reg = <0>;
-		};
-	};
-};
+//&gmac1 {
+//	phy-handle = <&phy1>;
+//	phy-mode = "rgmii-id";
+//	status = "okay";
+//
+//	mdio {
+//		#address-cells = <1>;
+//		#size-cells = <0>;
+//		compatible = "snps,dwmac-mdio";
+//
+//		phy1: ethernet-phy@1 {
+//			reg = <0>;
+//		};
+//	};
+//};
 
 &i2c0 {
 	clock-frequency = <100000>;
@@ -263,16 +273,16 @@
 	pinctrl-0 = <&i2c2_pins>;
 	status = "okay";
 
-	seeed_plane_i2c@45 {
-		compatible = "seeed_panel";
-		reg = <0x45>;
-
-		port {
-			panel_out0: endpoint {
-				remote-endpoint = <&dsi0_output>;
-			};
-		};
-	};
+//	seeed_plane_i2c@45 {
+//		compatible = "seeed_panel";
+//		reg = <0x45>;
+//
+//		port {
+//			panel_out0: endpoint {
+//				remote-endpoint = <&dsi0_output>;
+//			};
+//		};
+//	};
 
 	tinker_ft5406: tinker_ft5406@38 {
 		compatible = "tinker_ft5406";
@@ -286,18 +296,18 @@
 		reset-gpios = <&sysgpio 31 GPIO_ACTIVE_HIGH>;
 	};
 
-	panel_radxa@19 {
-		compatible ="starfive_jadard";
-		reg = <0x19>;
-		reset-gpio = <&sysgpio 23 0>;
-		enable-gpio = <&sysgpio 22 0>;
-
-		port {
-			panel_out1: endpoint {
-				remote-endpoint = <&dsi1_output>;
-			};
-		};
-	};
+//	panel_radxa@19 {
+//		compatible ="starfive_jadard";
+//		reg = <0x19>;
+//		reset-gpio = <&sysgpio 23 0>;
+//		enable-gpio = <&sysgpio 22 0>;
+//
+//		port {
+//			panel_out1: endpoint {
+//				remote-endpoint = <&dsi1_output>;
+//			};
+//		};
+//	};
 };
 
 &i2c5 {
@@ -509,11 +519,11 @@
 	status = "okay";
 };
 
-&pwmdac {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pwmdac_pins>;
-	status = "okay";
-};
+//&pwmdac {
+//	pinctrl-names = "default";
+//	pinctrl-0 = <&pwmdac_pins>;
+//	status = "okay";
+//};
 
 &qspi {
 	#address-cells = <1>;
@@ -990,11 +1000,11 @@
 			remote-endpoint = <&hdmi_in_lcdc>;
 		};
 
-		dc_out_dpi2: endpoint@2 {
-			reg = <2>;
-			remote-endpoint = <&mipi_in>;
+//		dc_out_dpi2: endpoint@2 {
+//			reg = <2>;
+//			remote-endpoint = <&mipi_in>;
+//		};
 		};
-	};
 };
 
 &hdmi {
@@ -1033,66 +1043,66 @@
 	};
 };
 
-&dsi_output {
-	status = "okay";
+//&dsi_output {
+//	status = "okay";
+//
+//	ports {
+//		#address-cells = <1>;
+//		#size-cells = <0>;
+//
+//		port@0 {
+//			reg = <0>;
+//			mipi_in: endpoint {
+//				remote-endpoint = <&dc_out_dpi2>;
+//			};
+//		};
+//
+//		port@1 {
+//			reg = <1>;
+//			sf_dpi_output: endpoint {
+//				remote-endpoint = <&dsi_in_port>;
+//			};
+//		};
+//	};
+//};
 
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		port@0 {
-			reg = <0>;
-			mipi_in: endpoint {
-				remote-endpoint = <&dc_out_dpi2>;
-			};
-		};
-
-		port@1 {
-			reg = <1>;
-			sf_dpi_output: endpoint {
-				remote-endpoint = <&dsi_in_port>;
-			};
-		};
-	};
-};
-
-&mipi_dsi {
-	status = "okay";
-
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		port@0 {
-			reg = <0>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			dsi0_output: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&panel_out0>;
-			};
-
-			dsi1_output: endpoint@1 {
-				reg = <1>;
-				remote-endpoint = <&panel_out1>;
-			};
-
-		};
-
-		port@1{
-			reg = <1>;
-			dsi_in_port: endpoint {
-				remote-endpoint = <&sf_dpi_output>;
-			};
-		};
-
-	};
-};
-
-&mipi_dphy {
-	status = "okay";
-};
+//&mipi_dsi {
+//	status = "okay";
+//
+//	ports {
+//		#address-cells = <1>;
+//		#size-cells = <0>;
+//
+//		port@0 {
+//			reg = <0>;
+//			#address-cells = <1>;
+//			#size-cells = <0>;
+//
+//			dsi0_output: endpoint@0 {
+//				reg = <0>;
+//				remote-endpoint = <&panel_out0>;
+//			};
+//
+//			dsi1_output: endpoint@1 {
+//				reg = <1>;
+//				remote-endpoint = <&panel_out1>;
+//			};
+//
+//		};
+//
+//		port@1{
+//			reg = <1>;
+//			dsi_in_port: endpoint {
+//				remote-endpoint = <&sf_dpi_output>;
+//			};
+//		};
+//
+//	};
+//};
+//
+//&mipi_dphy {
+//	status = "okay";
+//};
 
 &co_process {
 	memory-region = <&e24_mem>;

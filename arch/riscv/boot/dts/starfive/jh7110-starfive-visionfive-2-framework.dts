@@ -502,7 +502,7 @@
 	phys = <&pciephy0>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pcie0_pins>;
-	status = "okay";
+	status = "disabled";
 };
 
 &pcie1 {
@@ -959,7 +959,7 @@
 };
 
 &usb0 {
-	dr_mode = "peripheral";
+	dr_mode = "host"; /*host or peripheral*/
 	status = "okay";
 };
 

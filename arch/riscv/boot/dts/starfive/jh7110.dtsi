@@ -387,6 +387,11 @@
 		#size-cells = <2>;
 		ranges;
 
+		sys_iomux: sys_iomux@13040000 {
+			compatible = "syscon";
+			reg = <0x0 0x13040000 0x0 0x1000>;
+		};
+
 		clint: timer@2000000 {
 			compatible = "starfive,jh7110-clint", "sifive,clint0";
 			reg = <0x0 0x2000000 0x0 0x10000>;
@@ -666,6 +671,7 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 			starfive,stg-syscon = <&stg_syscon 0x4>;
+			starfive,sys-iomux = <&sys_iomux 0x80>;
 			clocks = <&stgcrg JH7110_STGCLK_USB0_LPM>,
 				 <&stgcrg JH7110_STGCLK_USB0_STB>,
 				 <&stgcrg JH7110_STGCLK_USB0_APB>,

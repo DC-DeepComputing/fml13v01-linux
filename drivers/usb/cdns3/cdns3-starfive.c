@@ -32,12 +32,17 @@
 #define USB_PLL_EN			BIT(22)
 #define USB_REFCLK_MODE			BIT(23)
 
+#define USB_OVER_CURRENT_MASK   0x007f0000 //0XFF0000
+#define USB_OVER_CURRENT        0x00010000 //0X7F00000
+
 struct cdns_starfive {
 	struct device *dev;
 	struct regmap *stg_syscon;
+	struct regmap *sys_iomux;
 	struct reset_control *resets;
 	struct clk_bulk_data *clks;
 	int num_clks;
+	u32 iomux_offset;
 	u32 stg_usb_mode;
 };
 
@@ -136,6 +141,18 @@ static int cdns_starfive_probe(struct platform_device *pdev)
 	if (IS_ERR(data->resets))
 		return dev_err_probe(data->dev, PTR_ERR(data->resets),
 				     "Failed to get resets");
+
+	// enable USB3.0: 0x13040080[22:16] = 7'h1
+	data->sys_iomux =
+		syscon_regmap_lookup_by_phandle_args(pdev->dev.of_node,
+							"starfive,sys-iomux", 1, &args);
+	if (IS_ERR(data->sys_iomux)) {
+		return dev_err_probe(dev, PTR_ERR(data->sys_iomux),
+				     "Failed to parse starfive,sys-iomux\n");
+	}
+	data->iomux_offset = args;
+	regmap_update_bits(data->sys_iomux, data->iomux_offset,
+			USB_OVER_CURRENT_MASK, USB_OVER_CURRENT);
 
 	cdns_mode_init(pdev, data);
 	ret = cdns_clk_rst_init(data);

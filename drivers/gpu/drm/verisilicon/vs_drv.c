@@ -339,7 +339,7 @@ static struct platform_driver *drm_sub_drivers[] = {
 	&inno_hdmi_driver,
 #endif
 
-	&simple_encoder_driver,
+	//&simple_encoder_driver,
 
 #ifdef CONFIG_VERISILICON_VIRTUAL_DISPLAY
 	&virtual_display_platform_driver,

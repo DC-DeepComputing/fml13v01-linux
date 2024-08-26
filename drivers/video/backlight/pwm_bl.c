@@ -99,6 +99,10 @@ static int pwm_backlight_update_status(struct backlight_device *bl)
 	if (pb->notify)
 		brightness = pb->notify(pb->dev, brightness);
 
+#if 1
+	brightness = (u8)~brightness;
+#endif
+
 	if (brightness > 0) {
 		pwm_get_state(pb->pwm, &state);
 		state.duty_cycle = compute_duty_cycle(pb, brightness, &state);
@@ -518,6 +522,9 @@ static int pwm_backlight_probe(struct platform_device *pdev)
 
 	/* Sync up PWM state. */
 	pwm_init_state(pb->pwm, &state);
+#if 1
+	state.polarity = PWM_POLARITY_INVERSED;
+#endif
 
 	/*
 	 * The DT case will set the pwm_period_ns field to 0 and store the

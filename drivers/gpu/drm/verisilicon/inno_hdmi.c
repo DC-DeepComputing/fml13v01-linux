@@ -109,6 +109,7 @@ static const struct pre_pll_config pre_pll_cfg_table[] = {
 	{175500000, 175500000, 1, 175, 2, 1, 1,  3, 0, 3, 4, 0, 0x7FFFFF},
 	{185590000, 185590000, 1, 185, 2, 1, 1,  3, 0, 3, 4, 0, 0x970A3C},
 	{187000000, 187000000, 1, 187, 2, 1, 1,  3, 0, 3, 4, 0, 0},
+	{235690000, 235690000, 1, 235, 2, 1, 1,  3, 0, 3,  4, 0, 0xB0A3D6},
 	{241500000, 241500000, 1, 161, 1, 1, 1,  4, 0, 2,  2, 0, 0},
 	{241700000, 241700000, 1, 241, 2, 1, 1,  3, 0, 3,  4, 0, 0xB33332},
 	{262750000, 262750000, 1, 262, 2, 1, 1,  3, 0, 3,  4, 0, 0xCFFFFF},
@@ -619,6 +620,7 @@ inno_hdmi_connector_mode_valid(struct drm_connector *connector,
 	int pclk = mode->clock * 1000;
 	bool valid = false;
 	int i;
+	printk("%s,mode->clock %d*****\n",__func__,mode->clock);
 
 	for (i = 0; cfg[i].pixclock != (~0UL); i++) {
 		if (pclk == cfg[i].pixclock) {

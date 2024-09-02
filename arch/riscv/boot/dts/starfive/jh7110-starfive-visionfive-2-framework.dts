@@ -348,6 +348,21 @@
 //			};
 //		};
 //	};
+
+	es8326_audio_codec: es8326@19 {
+		#sound-dai-cells = <0>;
+		compatible = "everest,es8326";
+		reg = <0x19>;
+		irq-gpio = <&sysgpio 46 0>;
+		spk-ctl-gpio = <&sysgpio 49 0>;
+//		everest,jack-detect-inverted;
+		everest,jack-pol = [0e];
+		everest,mic1-src = [00];
+		everest,mic2-src = [44];
+		everest,interrupt-src = [08];
+        everest,interrupt-clk = [45];
+		status = "okay";
+	};
 };
 
 &i2c5 {
@@ -489,7 +504,7 @@
 &i2srx {
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2srx_pins>;
-	status = "disabled";
+	status = "okay";
 };
 
 &i2stx0 {
@@ -501,7 +516,7 @@
 &i2stx1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2stx1_pins>;
-	status = "disabled";
+	status = "okay";
 };
 
 &mmc0 {
@@ -684,7 +699,7 @@
 				 <GPIOMUX(63, GPOUT_LOW,
 					      GPOEN_DISABLE,
 					      GPI_SYS_I2STX1_LRCK)>,
-				 <GPIOMUX(61, GPOUT_LOW,
+				 <GPIOMUX(44, GPOUT_LOW,
 					      GPOEN_DISABLE,
 					      GPI_SYS_I2SRX_SDIN0)>;
 			input-enable;
@@ -693,7 +708,7 @@
 
 	i2stx1_pins: i2stx1-0 {
 		sd-pins {
-			pinmux = <GPIOMUX(44, GPOUT_SYS_I2STX1_SDO0,
+			pinmux = <GPIOMUX(61, GPOUT_SYS_I2STX1_SDO0,
 					      GPOEN_ENABLE,
 					      GPI_NONE)>;
 			bias-disable;
@@ -1214,6 +1229,30 @@
 				data-lanes = <0 1>;
 				status = "okay";
 			};
+		};
+	};
+};
+
+&sound7 {
+	/* i2s + es8326 */
+	simple-audio-card,dai-link@0 {
+		reg = <0>;
+		format = "i2s";
+		bitclock-master = <&sndcodec1>;
+		frame-master = <&sndcodec1>;
+		mclk-fs = <256>;
+		status = "okay";
+
+		cpu0 {
+			sound-dai = <&i2stx1>;
+		};
+
+		cpu1 {
+			sound-dai = <&i2srx>;
+		};
+
+		sndcodec1: codec {
+			sound-dai = <&es8326_audio_codec>;
 		};
 	};
 };

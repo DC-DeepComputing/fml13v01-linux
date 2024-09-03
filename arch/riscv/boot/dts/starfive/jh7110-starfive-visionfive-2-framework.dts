@@ -561,7 +561,7 @@
 };
 
 &pcie1 {
-	perst-gpios = <&sysgpio 28 GPIO_ACTIVE_LOW>;
+	perst-gpios = <&sysgpio 21 GPIO_ACTIVE_LOW>;
 	phys = <&pciephy1>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pcie1_pins>;
@@ -827,7 +827,7 @@
 		};
 
 		wake-pins {
-			pinmux = <GPIOMUX(21, GPOUT_LOW,
+			pinmux = <GPIOMUX(28, GPOUT_HIGH,
 					      GPOEN_DISABLE,
 					      GPI_NONE)>;
 			bias-pull-up;

@@ -568,6 +568,11 @@
 	status = "okay";
 };
 
+&pciephy0 {
+	starfive,sys-syscon = <&sys_syscon 0x18>;
+	starfive,stg-syscon = <&stg_syscon 0x148 0x1f4>;
+};
+
 &pwm {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pwm_pins>;
@@ -1013,6 +1018,11 @@
 &usb0 {
 	dr_mode = "host"; /*host or peripheral*/
 	status = "okay";
+};
+
+&usb_cdns3 {
+	phys = <&usbphy0>, <&pciephy0>;
+	phy-names = "cdns3,usb2-phy", "cdns3,usb3-phy";
 };
 
 &U74_1 {

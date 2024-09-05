@@ -515,6 +515,21 @@
 		irq-gpio = <&sysgpio 30 0>;
 		status = "okay";
 	};
+
+	light_sensor: cm32183@29 {
+		compatible = "capella,cm32183";
+		reg = <0x29>;
+//		interrupt-parent = <&sysgpio>;
+//		interrupts = <47>;
+//		irq-gpio = <&gpio 47 0>;
+		status = "okay";
+	};
+
+	light_sensor2: cm32181@10 {
+		compatible = "capella,cm32181";
+		reg = <0x10>;
+		status = "okay";
+	};
 };
 
 &i2srx {

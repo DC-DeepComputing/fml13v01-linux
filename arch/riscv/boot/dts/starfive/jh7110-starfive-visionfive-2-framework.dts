@@ -327,6 +327,7 @@
 	tinker_ft5406: tinker_ft5406@38 {
 		compatible = "tinker_ft5406";
 		reg = <0x38>;
+		status = "disabled";
 	};
 
 	touchscreen@14 {
@@ -334,6 +335,7 @@
 		reg = <0x14>;
 		irq-gpios = <&sysgpio 30 GPIO_ACTIVE_HIGH>;
 		reset-gpios = <&sysgpio 31 GPIO_ACTIVE_HIGH>;
+		status = "disabled";
 	};
 
 //	panel_radxa@19 {
@@ -452,6 +454,7 @@
 		reset-gpio = <&sysgpio 18 0>;
 		rotation = <0>;
 		orientation = <1>; //CAMERA_ORIENTATION_BACK
+		status = "disabled";
 
 		port {
 			/* CSI2 bus endpoint */
@@ -471,6 +474,7 @@
 		reg = <0x1a>;
 		clocks = <&clk_ext_camera>;
 		reset-gpio = <&sysgpio 18 0>;
+		status = "disabled";
 
 		port {
 			imx708_to_csi2rx0: endpoint {
@@ -488,6 +492,7 @@
 		clocks = <&clk_ext_camera>;
 		clock-names = "xclk";
 		rotation = <180>;
+		status = "disabled";
 
 		port {
 			/* Parallel bus endpoint */
@@ -498,6 +503,17 @@
 				data-lanes = <1 2>;
 			};
 		};
+	};
+
+	touchpad: hid@2c {
+		compatible = "hid-over-i2c";
+		reg = <0x2c>;
+		hid-descr-addr = <0x0020>;
+		post-power-on-delay-ms = <200>;
+		interrupt-parent = <&sysgpio>;
+		interrupts = <30>;
+		irq-gpio = <&sysgpio 30 0>;
+		status = "okay";
 	};
 };
 
@@ -1218,7 +1234,7 @@
 				clock-lanes = <4>;
 				data-lanes = <0 1>;
 				lane-polarities = <0 0 0>;
-				status = "okay";
+				status = "disabled";
 			};
 
 			csi2rx0_from_imx708: endpoint@1 {
@@ -1228,7 +1244,7 @@
 				clock-lanes = <4>;
 				data-lanes = <0 1>;
 				lane-polarities = <0 0 0>;
-				status = "okay";
+				status = "disabled";
 			};
 
 			csi2rx0_from_ov4689: endpoint@2 {
@@ -1237,7 +1253,7 @@
 				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
 				clock-lanes = <4>;
 				data-lanes = <0 1>;
-				status = "okay";
+				status = "disabled";
 			};
 		};
 	};

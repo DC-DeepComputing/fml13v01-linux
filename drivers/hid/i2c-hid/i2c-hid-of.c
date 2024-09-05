@@ -131,6 +131,24 @@ static int i2c_hid_of_probe(struct i2c_client *client)
 	if (device_property_read_bool(dev, "touchscreen-inverted-y"))
 		quirks |= HID_QUIRK_Y_INVERT;
 
+#ifdef CONFIG_SOC_STARFIVE
+	{
+		struct gpio_desc *irq_gpio;
+		irq_gpio = devm_gpiod_get_optional(dev, "irq", GPIOD_IN);
+		if (IS_ERR(irq_gpio))
+		{
+			dev_err(dev, "failed to get irq gpio\n");
+			return -ENODEV;
+		}
+		client->irq = gpiod_to_irq(irq_gpio);
+		if (client->irq <= 0)
+		{
+			dev_err(dev, "get irq fail\n");
+			return -ENODEV;
+		}
+	}
+#endif
+
 	return i2c_hid_core_probe(client, &ihid_of->ops,
 				  hid_descriptor_address, quirks);
 }

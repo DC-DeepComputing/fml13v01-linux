@@ -5,7 +5,7 @@
 //
 // Authors: David Yang <yangxiaohua@everest-semi.com>
 //
-
+#define DEBUG
 #include <linux/clk.h>
 #include <linux/i2c.h>
 #include <linux/interrupt.h>
@@ -994,6 +994,12 @@ static int es8326_probe(struct snd_soc_component *component)
 	dev_dbg(component->dev, "interrupt-clk %x", es8326->interrupt_clk);
 
 	es8326_resume(component);
+
+#ifdef STARFIVE_CONFIG_CODEC_ES8326
+	regmap_write(es8326->regmap, ES8326_ADC_MUTE, 0x0f);
+	regmap_write(es8326->regmap, ES8326_ADC1_SRC, 0x44);
+	regmap_write(es8326->regmap, ES8326_ADC2_SRC, 0x66);
+#endif
 	return 0;
 }
 

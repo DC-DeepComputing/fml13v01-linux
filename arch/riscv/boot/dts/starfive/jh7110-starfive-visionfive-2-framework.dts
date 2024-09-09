@@ -83,6 +83,13 @@
 //		};
 //	};
 
+	rfkill_wifi {
+		compatible = "rfkill-gpio";
+		label = "Wi-Fi";
+		radio-type = "wlan";
+		shutdown-gpios = <&sysgpio 55 GPIO_ACTIVE_HIGH>;
+	};
+
 	backlight: backlight {
 		compatible = "pwm-backlight";
 		pwms = <&pwm 0 5000000 0 >;

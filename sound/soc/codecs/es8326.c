@@ -455,6 +455,11 @@ static int es8326_mute(struct snd_soc_dai *dai, int mute, int direction)
 		regmap_update_bits(es8326->regmap, ES8326_DAC_MUTE,
 				ES8326_MUTE_MASK, ES8326_MUTE);
 		regmap_write(es8326->regmap, ES8326_HP_DRIVER, 0xf0);
+
+#ifdef STARFIVE_CONFIG_CODEC_ES8326
+		if (!es8326->hp)
+			es8326_enable_spk(es8326, false);
+#endif
 	} else {
 		if (!es8326->calibrated) {
 			regmap_write(es8326->regmap, ES8326_HP_CAL, ES8326_HP_FORCE_CAL);
@@ -472,6 +477,11 @@ static int es8326_mute(struct snd_soc_dai *dai, int mute, int direction)
 		regmap_write(es8326->regmap, ES8326_HP_CAL, ES8326_HP_ON);
 		regmap_update_bits(es8326->regmap, ES8326_DAC_MUTE,
 				ES8326_MUTE_MASK, ~(ES8326_MUTE));
+
+#ifdef STARFIVE_CONFIG_CODEC_ES8326
+		if (!es8326->hp)
+			es8326_enable_spk(es8326, true);
+#endif
 	}
 	return 0;
 }

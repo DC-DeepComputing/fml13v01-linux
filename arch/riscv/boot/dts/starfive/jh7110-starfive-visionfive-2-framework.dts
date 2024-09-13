@@ -671,6 +671,24 @@
 	};
 };
 
+&spi1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi1_pins>;
+	status = "okay";
+
+	fwos_ec: spi@1 {
+		compatible = "google,cros-ec-spi";
+		irq-gpio = <&sysgpio 25 0>;
+		pl022,interface = <0>;
+		pl022,com-mode = <1>;
+		spi-max-frequency = <8250000>;
+		reg = <0>;
+		google,fwos-ec-spi-pre-delay = <10>;
+		google,fwos-ec-spi-msg-delay = <30>;
+		status = "okay";
+	};
+};
+
 &sysgpio {
 	i2c0_pins: i2c0-0 {
 		i2c-pins {
@@ -942,6 +960,44 @@
 			pinmux = <GPIOMUX(49, GPOUT_SYS_SPI0_FSS,
 					      GPOEN_ENABLE,
 					      GPI_SYS_SPI0_FSS)>;
+			bias-disable;
+			input-disable;
+			input-schmitt-disable;
+		};
+	};
+
+	spi1_pins: spi1-0 {
+		mosi-pins {
+			pinmux = <GPIOMUX(39, GPOUT_SYS_SPI1_TXD,
+					      GPOEN_ENABLE,
+					      GPI_NONE)>;
+			bias-disable;
+			input-disable;
+			input-schmitt-disable;
+		};
+
+		miso-pins {
+			pinmux = <GPIOMUX(36, GPOUT_LOW,
+					      GPOEN_DISABLE,
+					      GPI_SYS_SPI1_RXD)>;
+			bias-pull-up;
+			input-enable;
+			input-schmitt-enable;
+		};
+
+		sck-pins {
+			pinmux = <GPIOMUX(58, GPOUT_SYS_SPI1_CLK,
+					      GPOEN_ENABLE,
+					      GPI_SYS_SPI1_CLK)>;
+			bias-disable;
+			input-disable;
+			input-schmitt-disable;
+		};
+
+		ss-pins {
+			pinmux = <GPIOMUX(57, GPOUT_SYS_SPI1_FSS,
+					      GPOEN_ENABLE,
+					      GPI_SYS_SPI1_FSS)>;
 			bias-disable;
 			input-disable;
 			input-schmitt-disable;
@@ -1302,5 +1358,12 @@
 		sndcodec1: codec {
 			sound-dai = <&es8326_audio_codec>;
 		};
+	};
+};
+
+&fwos_ec {
+	keyboard-controller {
+		compatible = "google,cros-ec-keyb-switches";
+		status = "okay";
 	};
 };

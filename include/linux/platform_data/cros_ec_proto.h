@@ -261,6 +261,10 @@ int cros_ec_get_sensor_count(struct cros_ec_dev *ec);
 int cros_ec_cmd(struct cros_ec_device *ec_dev, unsigned int version, int command, void *outdata,
 		    size_t outsize, void *indata, size_t insize);
 
+int cros_ec_cmd_readmem(struct cros_ec_device *ec_dev, u8 offset, u8 size, void *dest);
+
+int cros_ec_get_cmd_versions(struct cros_ec_device *ec_dev, u16 cmd);
+
 /**
  * cros_ec_get_time_ns() - Return time in ns.
  *

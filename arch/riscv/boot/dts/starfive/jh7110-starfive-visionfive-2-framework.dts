@@ -517,8 +517,6 @@
 		reg = <0x2c>;
 		hid-descr-addr = <0x0020>;
 		post-power-on-delay-ms = <200>;
-		interrupt-parent = <&sysgpio>;
-		interrupts = <30>;
 		irq-gpio = <&sysgpio 30 0>;
 		status = "okay";
 	};

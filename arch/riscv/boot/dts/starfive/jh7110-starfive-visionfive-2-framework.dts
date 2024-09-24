@@ -9,6 +9,7 @@
 #include "jh7110-pinfunc.h"
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/linux-event-codes.h>
 
 / {
 	model = "StarFive VisionFive 2 framework";
@@ -211,6 +212,28 @@
 //		#clock-cells = <0>;
 //		clock-frequency = <24576000>;
 //	};
+
+	gpio_keys: gpio-keys {
+		status = "okay";
+		compatible = "gpio-keys";
+		autorepeat;
+
+		camera-en-sw {
+			label = "camera en switch";
+			debounce-interval = <10>;
+			linux,input-type = <EV_SW>;
+			linux,code = <SW_CAMERA_LENS_COVER>;
+			gpios = <&sysgpio 56 GPIO_ACTIVE_LOW>;
+		};
+
+		mic-mute-sw {
+			label = "mic mute switch";
+			debounce-interval = <10>;
+			linux,input-type = <EV_SW>;
+			linux,code = <SW_MUTE_DEVICE>;
+			gpios = <&sysgpio 59 GPIO_ACTIVE_LOW>;
+		};
+	};
 };
 
 &dvp_clk {

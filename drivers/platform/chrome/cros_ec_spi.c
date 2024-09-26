@@ -2,7 +2,7 @@
 // SPI interface for ChromeOS Embedded Controller
 //
 // Copyright (C) 2012 Google, Inc
-
+#define DEBUG
 #include <linux/delay.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -100,6 +100,8 @@ struct cros_ec_xfer_work_params {
 	int ret;
 };
 
+static bool debug_en = false;
+
 static void debug_packet(struct device *dev, const char *name, u8 *ptr,
 			 int len)
 {
@@ -167,6 +169,18 @@ static int receive_n_bytes(struct cros_ec_device *ec_dev, u8 *buf, int n)
 	ret = spi_sync_locked(ec_spi->spi, &msg);
 	if (ret < 0)
 		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+
+	if (debug_en) {
+		int ii;
+		u8 *rx_buf, *tx_buf;
+		rx_buf = (u8 *)trans.rx_buf;
+		//tx_buf = (u8 *)trans.tx_buf;
+
+		printk("%s len = %d\n", __func__, trans.len);
+		for (ii = 0; ii < trans.len; ii++)
+			printk("%s rx_buf[%d] : 0x%02x\n",
+			       __func__, ii, rx_buf[ii]);
+	}
 
 	return ret;
 }
@@ -264,8 +278,8 @@ static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
 		 * maximum-supported transfer size.
 		 */
 		todo = min(need_len, 256);
-		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
-			todo, need_len, ptr - ec_dev->din);
+		//dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
+		//	todo, need_len, ptr - ec_dev->din);
 
 		ret = receive_n_bytes(ec_dev, ptr, todo);
 		if (ret < 0)
@@ -277,6 +291,8 @@ static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
 
 	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
 
+	//dev_dbg(ec_dev->dev, "%s() Additional read-in 4 bytes\n", __func__);
+	receive_n_bytes(ec_dev, (u8 *)&ret, 4);
 	return 0;
 }
 
@@ -344,8 +360,8 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
 	todo = min(todo, need_len);
 	memmove(ec_dev->din, ptr, todo);
 	ptr = ec_dev->din + todo;
-	dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
-		 need_len, todo);
+	//dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
+	//	 need_len, todo);
 	need_len -= todo;
 
 	/* Receive data until we have it all */
@@ -371,6 +387,9 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
 
 	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
 
+	// fixme
+	dev_dbg(ec_dev->dev, "%s() Additional read-in 4 bytes\n", __func__);
+	receive_n_bytes(ec_dev, (u8 *)&ret, 4);
 	return 0;
 }
 
@@ -431,6 +450,18 @@ static int do_cros_ec_pkt_xfer_spi(struct cros_ec_device *ec_dev,
 	trans.cs_change = 1;
 	spi_message_add_tail(&trans, &msg);
 	ret = spi_sync_locked(ec_spi->spi, &msg);
+
+	if (debug_en) {
+		int ii;
+		u8 *rx_buf, *tx_buf;
+		rx_buf = (u8 *)trans.rx_buf;
+		tx_buf = (u8 *)trans.tx_buf;
+
+		printk("%s len = %d\n", __func__, trans.len);
+		for (ii = 0; ii < trans.len; ii++)
+			printk("%s rx_buf[%d] : 0x%02x, tx_buf[%d] : 0x%02x\n",
+			       __func__, ii, rx_buf[ii], ii, tx_buf[ii]);
+	}
 
 	/* Get the response */
 	if (!ret) {
@@ -566,6 +597,18 @@ static int do_cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
 	spi_message_init(&msg);
 	spi_message_add_tail(&trans, &msg);
 	ret = spi_sync_locked(ec_spi->spi, &msg);
+
+	if (debug_en) {
+		int ii;
+		u8 *rx_buf, *tx_buf;
+		rx_buf = (u8 *)trans.rx_buf;
+		tx_buf = (u8 *)trans.tx_buf;
+
+		printk("%s len = %d\n", __func__, trans.len);
+		for (ii = 0; ii < trans.len; ii++)
+			printk("%s rx_buf[%d] : 0x%02x, tx_buf[%d] : 0x%02x\n", 
+				__func__, ii, rx_buf[ii], ii, tx_buf[ii]);
+	}
 
 	/* Get the response */
 	if (!ret) {
@@ -738,7 +781,22 @@ static int cros_ec_spi_probe(struct spi_device *spi)
 	struct device *dev = &spi->dev;
 	struct cros_ec_device *ec_dev;
 	struct cros_ec_spi *ec_spi;
+	struct gpio_desc *irq_gpio;
+	int irq;
 	int err;
+
+	irq_gpio = devm_gpiod_get_optional(dev, "irq", GPIOD_IN);
+	if (IS_ERR(irq_gpio)) {
+		dev_err(dev, "failed to get irq gpio\n");
+		return -ENODEV;
+	}
+	gpiod_direction_input(irq_gpio);
+
+	irq = gpiod_to_irq(irq_gpio);
+	if (irq <= 0) {
+		dev_err(dev, "get irq fail\n");
+		return -ENODEV;
+	}
 
 	spi->rt = true;
 	err = spi_setup(spi);
@@ -752,6 +810,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
 	if (!ec_dev)
 		return -ENOMEM;
+	dev_dbg(dev, "%s ec_dev = %p\n", __func__, ec_dev);
 
 	/* Check for any DT properties */
 	cros_ec_spi_dt_probe(ec_spi, dev);
@@ -759,7 +818,8 @@ static int cros_ec_spi_probe(struct spi_device *spi)
 	spi_set_drvdata(spi, ec_dev);
 	ec_dev->dev = dev;
 	ec_dev->priv = ec_spi;
-	ec_dev->irq = spi->irq;
+	ec_dev->irq = irq; // spi->irq
+	
 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
@@ -839,3 +899,4 @@ module_spi_driver(cros_ec_driver_spi);
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("SPI interface for ChromeOS Embedded Controller");
+module_param(debug_en, bool, 0444);

@@ -4,7 +4,8 @@
  *
  * Copyright (C) 2014 Google, Inc.
  */
-
+#define DEBUG
+#define LOGD(fmt, args...) printk(KERN_INFO "DBG: %s:%d %s() " fmt, __FILE__, __LINE__, __FUNCTION__, ##args)
 #include <linux/dmi.h>
 #include <linux/kconfig.h>
 #include <linux/mfd/core.h>
@@ -113,6 +114,7 @@ static const struct mfd_cell cros_ec_platform_cells[] = {
 	{ .name = "cros-ec-chardev", },
 	{ .name = "cros-ec-debugfs", },
 	{ .name = "cros-ec-sysfs", },
+	{ .name = "cros-ec-hwmon", },
 };
 
 static const struct mfd_cell cros_ec_pchg_cells[] = {
@@ -141,7 +143,7 @@ static int ec_device_probe(struct platform_device *pdev)
 	struct cros_ec_dev *ec = kzalloc(sizeof(*ec), GFP_KERNEL);
 	struct ec_response_pchg_count pchg_count;
 	int i;
-
+	LOGD("\n");
 	if (!ec)
 		return retval;
 
@@ -184,8 +186,10 @@ static int ec_device_probe(struct platform_device *pdev)
 	}
 
 	retval = device_add(&ec->class_dev);
-	if (retval)
+	if (retval) {
+		LOGD("\n");
 		goto failed;
+	}
 
 	/* check whether this EC is a sensor hub. */
 	if (cros_ec_get_sensor_count(ec) > 0) {
@@ -202,7 +206,7 @@ static int ec_device_probe(struct platform_device *pdev)
 	 * EC_FEATURE_GET_CMD Embedded Controller device.
 	 */
 	for (i = 0; i < ARRAY_SIZE(cros_subdevices); i++) {
-		if (cros_ec_check_features(ec, cros_subdevices[i].id)) {
+		//if (cros_ec_check_features(ec, cros_subdevices[i].id)) {
 			retval = mfd_add_hotplug_devices(ec->dev,
 						cros_subdevices[i].mfd_cells,
 						cros_subdevices[i].num_cells);
@@ -211,7 +215,7 @@ static int ec_device_probe(struct platform_device *pdev)
 					"failed to add %s subdevice: %d\n",
 					cros_subdevices[i].mfd_cells->name,
 					retval);
-		}
+		//}
 	}
 
 	/*
@@ -234,7 +238,7 @@ static int ec_device_probe(struct platform_device *pdev)
 	 * device entry defined.
 	 */
 	if (IS_ENABLED(CONFIG_OF) && ec->ec_dev->dev->of_node) {
-		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
+		//if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
 			retval = mfd_add_hotplug_devices(ec->dev,
 					cros_usbpd_notify_cells,
 					ARRAY_SIZE(cros_usbpd_notify_cells));
@@ -242,7 +246,7 @@ static int ec_device_probe(struct platform_device *pdev)
 				dev_err(ec->dev,
 					"failed to add PD notify devices: %d\n",
 					retval);
-		}
+		//}
 	}
 
 	/*
@@ -281,9 +285,11 @@ static int ec_device_probe(struct platform_device *pdev)
 				 retval);
 	}
 
+	LOGD("done!\n");
 	return 0;
 
 failed:
+	LOGD("failed\n");
 	put_device(&ec->class_dev);
 	return retval;
 }

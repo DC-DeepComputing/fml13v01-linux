@@ -324,16 +324,6 @@
 //	};
 //};
 
-&i2c0 {
-	clock-frequency = <100000>;
-	i2c-sda-hold-time-ns = <300>;
-	i2c-sda-falling-time-ns = <510>;
-	i2c-scl-falling-time-ns = <510>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&i2c0_pins>;
-	status = "okay";
-};
-
 &i2c2 {
 	clock-frequency = <100000>;
 	i2c-sda-hold-time-ns = <300>;
@@ -699,7 +689,7 @@
 
 	fwos_ec: spi@1 {
 		compatible = "google,cros-ec-spi";
-		irq-gpio = <&sysgpio 25 0>;
+		irq-gpio = <&sysgpio 26 0>;
 		pl022,interface = <0>;
 		pl022,com-mode = <1>;
 		spi-max-frequency = <8250000>;
@@ -711,20 +701,6 @@
 };
 
 &sysgpio {
-	i2c0_pins: i2c0-0 {
-		i2c-pins {
-			pinmux = <GPIOMUX(57, GPOUT_LOW,
-					      GPOEN_SYS_I2C0_CLK,
-					      GPI_SYS_I2C0_CLK)>,
-				 <GPIOMUX(58, GPOUT_LOW,
-					      GPOEN_SYS_I2C0_DATA,
-					      GPI_SYS_I2C0_DATA)>;
-			bias-disable; /* external pull-up */
-			input-enable;
-			input-schmitt-enable;
-		};
-	};
-
 	i2c2_pins: i2c2-0 {
 		i2c-pins {
 			pinmux = <GPIOMUX(3, GPOUT_LOW,

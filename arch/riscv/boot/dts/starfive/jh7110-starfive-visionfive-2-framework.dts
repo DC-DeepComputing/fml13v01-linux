@@ -692,7 +692,9 @@
 		irq-gpio = <&sysgpio 26 0>;
 		pl022,interface = <0>;
 		pl022,com-mode = <1>;
-		spi-max-frequency = <8250000>;
+		spi-max-frequency = <1000000>;//<8250000>;
+//		spi-cpol;
+		spi-cpha;
 		reg = <0>;
 		google,fwos-ec-spi-pre-delay = <10>;
 		google,fwos-ec-spi-msg-delay = <30>;

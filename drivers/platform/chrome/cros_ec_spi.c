@@ -2,7 +2,7 @@
 // SPI interface for ChromeOS Embedded Controller
 //
 // Copyright (C) 2012 Google, Inc
-#define DEBUG
+
 #include <linux/delay.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -58,7 +58,7 @@
   * need at least 70 us with the 16 MHz STM32 EC, so go with 200 us to be
   * safe.
   */
-#define EC_SPI_RECOVERY_TIME_NS	(200 * 1000)
+#define EC_SPI_RECOVERY_TIME_NS	(/*200*/1000 * 1000)
 
 /**
  * struct cros_ec_spi - information about a SPI-connected EC
@@ -278,8 +278,8 @@ static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
 		 * maximum-supported transfer size.
 		 */
 		todo = min(need_len, 256);
-		//dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
-		//	todo, need_len, ptr - ec_dev->din);
+		dev_dbg(ec_dev->dev, "loop, todo=%d, need_len=%d, ptr=%zd\n",
+			todo, need_len, ptr - ec_dev->din);
 
 		ret = receive_n_bytes(ec_dev, ptr, todo);
 		if (ret < 0)
@@ -290,9 +290,6 @@ static int cros_ec_spi_receive_packet(struct cros_ec_device *ec_dev,
 	}
 
 	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
-
-	//dev_dbg(ec_dev->dev, "%s() Additional read-in 4 bytes\n", __func__);
-	receive_n_bytes(ec_dev, (u8 *)&ret, 4);
 	return 0;
 }
 
@@ -360,8 +357,8 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
 	todo = min(todo, need_len);
 	memmove(ec_dev->din, ptr, todo);
 	ptr = ec_dev->din + todo;
-	//dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
-	//	 need_len, todo);
+	dev_dbg(ec_dev->dev, "need %d, got %d bytes from preamble\n",
+		 need_len, todo);
 	need_len -= todo;
 
 	/* Receive data until we have it all */
@@ -386,10 +383,6 @@ static int cros_ec_spi_receive_response(struct cros_ec_device *ec_dev,
 	}
 
 	dev_dbg(ec_dev->dev, "loop done, ptr=%zd\n", ptr - ec_dev->din);
-
-	// fixme
-	dev_dbg(ec_dev->dev, "%s() Additional read-in 4 bytes\n", __func__);
-	receive_n_bytes(ec_dev, (u8 *)&ret, 4);
 	return 0;
 }
 

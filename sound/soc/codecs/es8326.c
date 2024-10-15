@@ -5,7 +5,7 @@
 //
 // Authors: David Yang <yangxiaohua@everest-semi.com>
 //
-#define DEBUG
+
 #include <linux/clk.h>
 #include <linux/i2c.h>
 #include <linux/interrupt.h>
@@ -48,6 +48,7 @@ struct es8326_priv {
 #ifdef STARFIVE_CONFIG_CODEC_ES8326
 	int spk_ctl_gpio;
 	struct gpio_desc *irq_gpio;
+	bool mute_en;
 #endif
 };
 
@@ -457,8 +458,8 @@ static int es8326_mute(struct snd_soc_dai *dai, int mute, int direction)
 		regmap_write(es8326->regmap, ES8326_HP_DRIVER, 0xf0);
 
 #ifdef STARFIVE_CONFIG_CODEC_ES8326
-		if (!es8326->hp)
-			es8326_enable_spk(es8326, false);
+		es8326_enable_spk(es8326, false);
+		es8326->mute_en = true;
 #endif
 	} else {
 		if (!es8326->calibrated) {
@@ -481,6 +482,7 @@ static int es8326_mute(struct snd_soc_dai *dai, int mute, int direction)
 #ifdef STARFIVE_CONFIG_CODEC_ES8326
 		if (!es8326->hp)
 			es8326_enable_spk(es8326, true);
+		es8326->mute_en = false;
 #endif
 	}
 	return 0;
@@ -698,7 +700,8 @@ static void es8326_jack_detect_handler(struct work_struct *work)
 		/* Jack unplugged or spurious IRQ */
 		dev_dbg(comp->dev, "No headset detected\n");
 #ifdef STARFIVE_CONFIG_CODEC_ES8326
-		es8326_enable_spk(es8326, true);
+		if (!es8326->mute_en)
+			es8326_enable_spk(es8326, true);
 #endif
 		es8326_disable_micbias(es8326->component);
 		//if (es8326->jack->status & SND_JACK_HEADPHONE) {
@@ -1006,6 +1009,8 @@ static int es8326_probe(struct snd_soc_component *component)
 	es8326_resume(component);
 
 #ifdef STARFIVE_CONFIG_CODEC_ES8326
+	es8326_enable_spk(es8326, false);
+	es8326->mute_en = true;
 	regmap_write(es8326->regmap, ES8326_ADC_MUTE, 0x0f);
 	regmap_write(es8326->regmap, ES8326_ADC1_SRC, 0x44);
 	regmap_write(es8326->regmap, ES8326_ADC2_SRC, 0x66);

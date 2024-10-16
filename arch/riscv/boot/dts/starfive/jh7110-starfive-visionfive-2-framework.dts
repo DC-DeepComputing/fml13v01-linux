@@ -72,18 +72,6 @@
 		};
 	};
 
-//	leds {
-//		compatible = "gpio-leds";
-//
-//		led-ack {
-//			gpios = <&aongpio 3 GPIO_ACTIVE_HIGH>;
-//			color = <LED_COLOR_ID_GREEN>;
-//			function = LED_FUNCTION_HEARTBEAT;
-//			linux,default-trigger = "heartbeat";
-//			label = "ack";
-//		};
-//	};
-
 	rfkill_wifi {
 		compatible = "rfkill-gpio";
 		label = "Wi-Fi";
@@ -137,39 +125,12 @@
 		priority = <224>;
 	};
 
-//	pwmdac_codec: pwmdac-codec {
-//		compatible = "linux,spdif-dit";
-//		#sound-dai-cells = <0>;
-//	};
-
 	sound7: snd-card7 {
 		compatible = "simple-audio-card";
 		simple-audio-card,name = "Starfive-ES8326-Sound-Card";
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
-		
-//	sound3: snd-card3 {
-//		compatible = "simple-audio-card";
-//		simple-audio-card,name = "Starfive-PWMDAC-Sound-Card";
-//		#address-cells = <1>;
-//		#size-cells = <0>;
-//
-//		simple-audio-card,dai-link@0 {
-//			reg = <0>;
-//			format = "left_j";
-//			bitclock-master = <&sndcpu0>;
-//			frame-master = <&sndcpu0>;
-//
-//			sndcpu0: cpu {
-//				sound-dai = <&pwmdac>;
-//			};
-//
-//			codec {
-//				sound-dai = <&pwmdac_codec>;
-//			};
-//		};
-//	};
 
 	sound1: snd-card1 {
 		compatible = "simple-audio-card";
@@ -195,23 +156,11 @@
 		};
 	};
 
-//	ac108_mclk: ac108_mclk {
-//		compatible = "fixed-clock";
-//		#clock-cells = <0>;
-//		clock-frequency = <24000000>;
-//	};
-
 	clk_ext_camera: clk-ext-camera {
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
 		clock-frequency = <24000000>;
 	};
-
-//	wm8960_mclk: wm8960_mclk {
-//		compatible = "fixed-clock";
-//		#clock-cells = <0>;
-//		clock-frequency = <24576000>;
-//	};
 
 	gpio_keys: gpio-keys {
 		status = "okay";
@@ -239,22 +188,6 @@
 &dvp_clk {
 	clock-frequency = <74250000>;
 };
-
-//&gmac0_rgmii_rxin {
-//	clock-frequency = <125000000>;
-//};
-
-//&gmac0_rmii_refin {
-//	clock-frequency = <50000000>;
-//};
-
-//&gmac1_rgmii_rxin {
-//	clock-frequency = <125000000>;
-//};
-
-//&gmac1_rmii_refin {
-//	clock-frequency = <50000000>;
-//};
 
 &hdmitx0_pixelclk {
 	clock-frequency = <297000000>;
@@ -292,38 +225,6 @@
 	clock-frequency = <49152000>;
 };
 
-//&gmac0 {
-//	phy-handle = <&phy0>;
-//	phy-mode = "rgmii-id";
-//	status = "okay";
-//
-//	mdio {
-//		#address-cells = <1>;
-//		#size-cells = <0>;
-//		compatible = "snps,dwmac-mdio";
-//
-//		phy0: ethernet-phy@0 {
-//			reg = <0>;
-//		};
-//	};
-//};
-
-//&gmac1 {
-//	phy-handle = <&phy1>;
-//	phy-mode = "rgmii-id";
-//	status = "okay";
-//
-//	mdio {
-//		#address-cells = <1>;
-//		#size-cells = <0>;
-//		compatible = "snps,dwmac-mdio";
-//
-//		phy1: ethernet-phy@1 {
-//			reg = <0>;
-//		};
-//	};
-//};
-
 &i2c2 {
 	clock-frequency = <100000>;
 	i2c-sda-hold-time-ns = <300>;
@@ -333,23 +234,6 @@
 	pinctrl-0 = <&i2c2_pins>;
 	status = "okay";
 
-//	seeed_plane_i2c@45 {
-//		compatible = "seeed_panel";
-//		reg = <0x45>;
-//
-//		port {
-//			panel_out0: endpoint {
-//				remote-endpoint = <&dsi0_output>;
-//			};
-//		};
-//	};
-
-	tinker_ft5406: tinker_ft5406@38 {
-		compatible = "tinker_ft5406";
-		reg = <0x38>;
-		status = "disabled";
-	};
-
 	touchscreen@14 {
 		compatible = "goodix,gt911";
 		reg = <0x14>;
@@ -357,19 +241,6 @@
 		reset-gpios = <&sysgpio 31 GPIO_ACTIVE_HIGH>;
 		status = "disabled";
 	};
-
-//	panel_radxa@19 {
-//		compatible ="starfive_jadard";
-//		reg = <0x19>;
-//		reset-gpio = <&sysgpio 23 0>;
-//		enable-gpio = <&sysgpio 22 0>;
-//
-//		port {
-//			panel_out1: endpoint {
-//				remote-endpoint = <&dsi1_output>;
-//			};
-//		};
-//	};
 
 	es8326_audio_codec: es8326@19 {
 		#sound-dai-cells = <0>;
@@ -465,65 +336,6 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c6_pins>;
 	status = "okay";
-
-	imx219: imx219@10 {
-		compatible = "sony,imx219";
-		reg = <0x10>;
-		clocks = <&clk_ext_camera>;
-		clock-names = "xclk";
-		reset-gpio = <&sysgpio 18 0>;
-		rotation = <0>;
-		orientation = <1>; //CAMERA_ORIENTATION_BACK
-		status = "disabled";
-
-		port {
-			/* CSI2 bus endpoint */
-			imx219_to_csi2rx0: endpoint {
-				remote-endpoint = <&csi2rx0_from_imx219>;
-				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
-				clock-lanes = <4>;
-				data-lanes = <0 1>;
-				lane-polarities = <0 0 0>;
-				link-frequencies = /bits/ 64 <456000000>;
-			};
-		};
-	};
-
-	imx708: imx708@1a {
-		compatible = "sony,imx708";
-		reg = <0x1a>;
-		clocks = <&clk_ext_camera>;
-		reset-gpio = <&sysgpio 18 0>;
-		status = "disabled";
-
-		port {
-			imx708_to_csi2rx0: endpoint {
-				remote-endpoint = <&csi2rx0_from_imx708>;
-				data-lanes = <1 2>;
-				clock-noncontinuous;
-				link-frequencies = /bits/ 64 <450000000>;
-			};
-		};
-	};
-
-	ov4689: ov4689@36 {
-		compatible = "ovti,ov4689";
-		reg = <0x36>;
-		clocks = <&clk_ext_camera>;
-		clock-names = "xclk";
-		rotation = <180>;
-		status = "disabled";
-
-		port {
-			/* Parallel bus endpoint */
-			ov4689_to_csi2rx0: endpoint {
-				remote-endpoint = <&csi2rx0_from_ov4689>;
-				bus-type = <4>;		/* MIPI CSI-2 D-PHY */
-				clock-lanes = <0>;
-				data-lanes = <1 2>;
-			};
-		};
-	};
 
 	touchpad: hid@2c {
 		compatible = "hid-over-i2c";
@@ -628,12 +440,6 @@
 	status = "okay";
 };
 
-//&pwmdac {
-//	pinctrl-names = "default";
-//	pinctrl-0 = <&pwmdac_pins>;
-//	status = "okay";
-//};
-
 &qspi {
 	#address-cells = <1>;
 	#size-cells = <0>;
@@ -667,18 +473,6 @@
 				reg = <0x600000 0xa00000>;
 			};
 		};
-	};
-};
-
-&spi0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&spi0_pins>;
-	status = "okay";
-
-	spi_dev0: spi@0 {
-		compatible = "rohm,dh2228fv";
-		reg = <0>;
-		spi-max-frequency = <10000000>;
 	};
 };
 
@@ -927,44 +721,6 @@
 		};
 	};
 
-	spi0_pins: spi0-0 {
-		mosi-pins {
-			pinmux = <GPIOMUX(52, GPOUT_SYS_SPI0_TXD,
-					      GPOEN_ENABLE,
-					      GPI_NONE)>;
-			bias-disable;
-			input-disable;
-			input-schmitt-disable;
-		};
-
-		miso-pins {
-			pinmux = <GPIOMUX(53, GPOUT_LOW,
-					      GPOEN_DISABLE,
-					      GPI_SYS_SPI0_RXD)>;
-			bias-pull-up;
-			input-enable;
-			input-schmitt-enable;
-		};
-
-		sck-pins {
-			pinmux = <GPIOMUX(48, GPOUT_SYS_SPI0_CLK,
-					      GPOEN_ENABLE,
-					      GPI_SYS_SPI0_CLK)>;
-			bias-disable;
-			input-disable;
-			input-schmitt-disable;
-		};
-
-		ss-pins {
-			pinmux = <GPIOMUX(49, GPOUT_SYS_SPI0_FSS,
-					      GPOEN_ENABLE,
-					      GPI_SYS_SPI0_FSS)>;
-			bias-disable;
-			input-disable;
-			input-schmitt-disable;
-		};
-	};
-
 	spi1_pins: spi1-0 {
 		mosi-pins {
 			pinmux = <GPIOMUX(39, GPOUT_SYS_SPI1_TXD,
@@ -1198,72 +954,10 @@
 	};
 };
 
-//&dsi_output {
-//	status = "okay";
-//
-//	ports {
-//		#address-cells = <1>;
-//		#size-cells = <0>;
-//
-//		port@0 {
-//			reg = <0>;
-//			mipi_in: endpoint {
-//				remote-endpoint = <&dc_out_dpi2>;
-//			};
-//		};
-//
-//		port@1 {
-//			reg = <1>;
-//			sf_dpi_output: endpoint {
-//				remote-endpoint = <&dsi_in_port>;
-//			};
-//		};
-//	};
-//};
-
-//&mipi_dsi {
-//	status = "okay";
-//
-//	ports {
-//		#address-cells = <1>;
-//		#size-cells = <0>;
-//
-//		port@0 {
-//			reg = <0>;
-//			#address-cells = <1>;
-//			#size-cells = <0>;
-//
-//			dsi0_output: endpoint@0 {
-//				reg = <0>;
-//				remote-endpoint = <&panel_out0>;
-//			};
-//
-//			dsi1_output: endpoint@1 {
-//				reg = <1>;
-//				remote-endpoint = <&panel_out1>;
-//			};
-//
-//		};
-//
-//		port@1{
-//			reg = <1>;
-//			dsi_in_port: endpoint {
-//				remote-endpoint = <&sf_dpi_output>;
-//			};
-//		};
-//
-//	};
-//};
-//
-//&mipi_dphy {
-//	status = "okay";
-//};
-
 &co_process {
 	memory-region = <&e24_mem>;
 	status = "okay";
 };
-
 
 &mailbox_contrl0 {
 	status = "okay";
@@ -1289,52 +983,6 @@
 	status = "okay";
 };
 
-&vin_sysctl {
-	/* when use dvp open this pinctrl*/
-	status = "okay";
-	mipi_0p9-supply = <&mipi_0p9>;
-
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		port@1 {
-			reg = <1>;
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			/* CSI2 bus endpoint */
-			csi2rx0_from_imx219: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&imx219_to_csi2rx0>;
-				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
-				clock-lanes = <4>;
-				data-lanes = <0 1>;
-				lane-polarities = <0 0 0>;
-				status = "disabled";
-			};
-
-			csi2rx0_from_imx708: endpoint@1 {
-				reg = <1>;
-				remote-endpoint = <&imx708_to_csi2rx0>;
-				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
-				clock-lanes = <4>;
-				data-lanes = <0 1>;
-				lane-polarities = <0 0 0>;
-				status = "disabled";
-			};
-
-			csi2rx0_from_ov4689: endpoint@2 {
-				reg = <2>;
-				remote-endpoint = <&ov4689_to_csi2rx0>;
-				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
-				clock-lanes = <4>;
-				data-lanes = <0 1>;
-				status = "disabled";
-			};
-		};
-	};
-};
 
 &sound7 {
 	/* i2s + es8326 */

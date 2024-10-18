@@ -479,6 +479,7 @@
 &spi1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi1_pins>;
+	cs-gpios = <&sysgpio 57 GPIO_ACTIVE_LOW>;
 	status = "okay";
 
 	fwos_ec: spi@1 {
@@ -744,15 +745,6 @@
 			pinmux = <GPIOMUX(58, GPOUT_SYS_SPI1_CLK,
 					      GPOEN_ENABLE,
 					      GPI_SYS_SPI1_CLK)>;
-			bias-disable;
-			input-disable;
-			input-schmitt-disable;
-		};
-
-		ss-pins {
-			pinmux = <GPIOMUX(57, GPOUT_SYS_SPI1_FSS,
-					      GPOEN_ENABLE,
-					      GPI_SYS_SPI1_FSS)>;
 			bias-disable;
 			input-disable;
 			input-schmitt-disable;

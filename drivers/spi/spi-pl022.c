@@ -1561,9 +1561,9 @@ static void do_polling_transfer(struct pl022 *pl022)
 		message->actual_length += pl022->cur_transfer->len;
 		/* Move to next transfer */
 		message->state = next_transfer(pl022);
-		if (message->state != STATE_DONE
-		    && pl022->cur_transfer->cs_change)
-			pl022_cs_control(pl022, SSP_CHIP_DESELECT);
+		//if (message->state != STATE_DONE &&
+		//    pl022->cur_transfer->cs_change)
+		//	pl022_cs_control(pl022, SSP_CHIP_DESELECT);
 	}
 out:
 	/* Handle end of message */

@@ -128,13 +128,11 @@ static ssize_t version_show(struct device *dev,
 	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
 	msg->insize = sizeof(*r_ver);
 	msg->outsize = 0;
-	printk("Get versions: ret = 0x%x\n", ret);
 	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
 	if (ret < 0) {
 		count = ret;
 		goto exit;
 	}
-	msleep(100);
 
 	r_ver = (struct ec_response_get_version *)msg->data;
 	/* Strings should be null-terminated, but let's be sure. */
@@ -150,7 +148,6 @@ static ssize_t version_show(struct device *dev,
 	msg->command = EC_CMD_GET_BUILD_INFO + ec->cmd_offset;
 	msg->insize = EC_HOST_PARAM_SIZE;
 	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-	printk("Get build info: ret = 0x%x\n", ret);
 	if (ret < 0) {
 		count += sysfs_emit_at(buf, count,
 				   "Build info:    XFER / EC ERROR %d / %d\n",
@@ -159,13 +156,11 @@ static ssize_t version_show(struct device *dev,
 		msg->data[EC_HOST_PARAM_SIZE - 1] = '\0';
 		count += sysfs_emit_at(buf, count, "Build info:    %s\n", msg->data);
 	}
-	msleep(100);
 
 	/* Get chip info. */
 	msg->command = EC_CMD_GET_CHIP_INFO + ec->cmd_offset;
 	msg->insize = sizeof(*r_chip);
 	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-	printk("Get chip info: ret = 0x%x\n", ret);
 	if (ret < 0) {
 		count += sysfs_emit_at(buf, count,
 				   "Chip info:     XFER / EC ERROR %d / %d\n",
@@ -185,7 +180,6 @@ static ssize_t version_show(struct device *dev,
 	msg->command = EC_CMD_GET_BOARD_VERSION + ec->cmd_offset;
 	msg->insize = sizeof(*r_board);
 	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-	printk("Get board version: ret = 0x%x\n", ret);
 	if (ret < 0) {
 		count += sysfs_emit_at(buf, count,
 				   "Board version: XFER / EC ERROR %d / %d\n",
@@ -196,6 +190,37 @@ static ssize_t version_show(struct device *dev,
 		count += sysfs_emit_at(buf, count,
 				   "Board version: %d\n",
 				   r_board->board_version);
+	}
+
+	/* Get touch board version */
+	msg->command = EC_CMD_GET_TOUCHPAD_VERSION + ec->cmd_offset;
+	msg->insize = sizeof(*r_board);
+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+	if (ret < 0) {
+		count += sysfs_emit_at(
+			buf, count, "Touchpad version: XFER / EC ERROR %d / %d\n",
+			ret, msg->result);
+	} else {
+		r_board = (struct ec_response_board_version *)msg->data;
+
+		count += sysfs_emit_at(buf, count, "Touchpad version: %d\n",
+				       r_board->board_version);
+	}
+
+	/* Get audio-exp board version */
+	msg->command = EC_CMD_GET_AUDIO_EXP_VERSION + ec->cmd_offset;
+	msg->insize = sizeof(*r_board);
+	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+	if (ret < 0) {
+		count += sysfs_emit_at(
+			buf, count,
+			"Audio-exp board version: XFER / EC ERROR %d / %d\n", ret,
+			msg->result);
+	} else {
+		r_board = (struct ec_response_board_version *)msg->data;
+
+		count += sysfs_emit_at(buf, count, "Audio-exp board version: %d\n",
+				       r_board->board_version);
 	}
 
 exit:

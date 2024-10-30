@@ -414,10 +414,7 @@
 };
 
 &pcie0 {
-	perst-gpios = <&sysgpio 26 GPIO_ACTIVE_LOW>;
 	phys = <&pciephy0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pcie0_pins>;
 	status = "disabled";
 };
 

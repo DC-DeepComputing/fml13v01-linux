@@ -1049,14 +1049,26 @@ static int cros_sbs_ec_notify(struct notifier_block *nb,
 	struct cros_ec_device *ec_dev = data;
 	struct cros_sbs_info *chip = container_of(nb, struct cros_sbs_info, notifier);
 	u32 host_event;
+	u32 mask;
 
 	if (ec_dev->event_size != sizeof(host_event))
 		return NOTIFY_DONE;
 
 	host_event = get_unaligned_le32(&ec_dev->event_data.data.host_event);
 
-	dev_dbg(chip->dev, "%s event_type: %d, host_event: 0x%x\n", __func__,
-		ec_dev->event_data.event_type, host_event);
+	if (ec_dev->event_data.event_type != EC_MKBP_EVENT_HOST_EVENT)
+		return NOTIFY_DONE;
+
+	mask = EC_HOST_EVENT_MASK(EC_HOST_EVENT_AC_CONNECTED) |
+	       EC_HOST_EVENT_MASK(EC_HOST_EVENT_AC_DISCONNECTED);
+	if (host_event & mask) {
+		dev_info(chip->dev, "%s: %s\n", __func__,
+			 (host_event &
+			  EC_HOST_EVENT_MASK(EC_HOST_EVENT_AC_CONNECTED)) ?
+				 "AC_CONNECTED" :
+				 "AC_DISCONNECTED");
+		cros_sbs_supply_changed(chip);
+	}
 
 	return NOTIFY_DONE;
 }

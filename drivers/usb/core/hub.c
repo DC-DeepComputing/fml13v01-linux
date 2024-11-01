@@ -2609,6 +2609,21 @@ int usb_new_device(struct usb_device *udev)
 		goto fail;
 	}
 
+	if (udev->descriptor.idVendor == USB_VENDOR_GENESYS_LOGIC) {
+		struct usb_bus *bus = udev->bus;
+
+		if (strcmp(udev->devpath, "1.1") == 0) {
+			dev_err(&udev->dev, "Found Left&Up GenesysLogic Hub 0x27!\n");
+
+			/*Set Downstream Port 1 JK level to 7
+			  Set Downstream Port 2 JK level to 2 -- default value*/
+			err = usb_control_msg_send(udev, 0, 0xe3,
+					   0x40, 0x0020,
+					   0x27,
+					   NULL, 0, 1000, GFP_KERNEL);
+		}
+	}
+
 	/* Create link files between child device and usb port device. */
 	if (udev->parent) {
 		struct usb_hub *hub = usb_hub_to_struct_hub(udev->parent);

@@ -12,8 +12,8 @@
 #include <dt-bindings/input/linux-event-codes.h>
 
 / {
-	model = "StarFive VisionFive 2 framework";
-	compatible = "starfive,visionfive-2-framework", "starfive,jh7110";
+	model = "DeepComputing FML13V01";
+	compatible = "deepcomputing,fml13v01", "starfive,jh7110";
 
 	aliases {
 //		ethernet0 = &gmac0;
